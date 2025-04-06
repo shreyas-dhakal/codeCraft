@@ -24,8 +24,18 @@ export const getSite: RequestHandler = async (req, res) => {
 
 export const createSite: RequestHandler = async (req, res) => {
   try {
-    const { name, email, contact } = req.body;
-    const site = new SiteModel({ name, email, contact });
+    const { name, email, contact, address} = req.body;
+    let logoBuffer: Buffer | undefined;
+    if (req.file) {
+      logoBuffer = req.file.buffer;
+    }
+    const site = new SiteModel({
+        name,
+        email,
+        contact,
+        address,
+        logo: logoBuffer,
+      });
     await site.save();
     res.status(201).json({ message: "Site data added", data: site });
   } catch (error) {
@@ -37,7 +47,7 @@ export const createSite: RequestHandler = async (req, res) => {
 export const updateSite: RequestHandler = async (req, res) => {
   try {
     const { id } = req.params;
-    const { name, email, contact } = req.body;
+    const { name, email, contact, address } = req.body;
     const site = await SiteModel.findById(id);
     if (!site) {
       res.sendStatus(404);
@@ -46,6 +56,10 @@ export const updateSite: RequestHandler = async (req, res) => {
     site.name = name;
     site.email = email;
     site.contact = contact;
+    site.address = address;
+    if (req.file) {
+        site.logo = req.file.buffer;
+      }
     await site.save();
     res.status(200).json({ message: "Site updated", data: site });
   } catch (error) {

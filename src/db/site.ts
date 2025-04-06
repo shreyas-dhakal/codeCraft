@@ -14,6 +14,14 @@ const SiteSchema = new mongoose.Schema({
         type: String, 
         required: true,
     },
+    address:{
+        type: String, 
+        required: true,
+    },
+    logo: {
+        type: Buffer,
+        required: true,
+      },
 });
 
 export const SiteModel = mongoose.model('Site', SiteSchema);
